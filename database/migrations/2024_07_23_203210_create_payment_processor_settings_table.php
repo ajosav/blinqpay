@@ -11,9 +11,9 @@ class CreatePaymentProcessorSettingsTable extends Migration
         Schema::create('payment_processor_settings', function (Blueprint $table) {
             $table->increments('id');
             $table->foreignId('payment_processor_id')->constrained('payment_processors')->cascadeOnDelete();
-            $table->double('fees_percentage')->comment('Percentage cost of each transactions');
-            $table->double('fees_cap')->comment('Maximum that can be charged on a transaction');
-            $table->integer('stability_rating')->default(1)->comment('Rating scale of 1 - 5. 1 representing very stable, and 5 representing less stable.');
+            $table->double('fees_percentage')->comment('Percentage cost of a transaction');
+            $table->double('fees_cap')->nullable()->comment('Maximum that can be charged on a transaction');
+            $table->integer('reliability')->default(1);
             $table->timestamps();
         });
     }

@@ -1,10 +1,18 @@
 <?php
 
-use Ajosav\Blinqpay\Models\PaymentProcessor;
-use Faker\Generator;
 
-$factory->define(PaymentProcessor::class, function (Generator $faker) {
-    return [
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-    ];
-});
+class PaymentProcessorFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition()
+    {
+        return [
+        ];
+    }
+}

@@ -21,14 +21,14 @@ return [
 
     'routing_rules' => [
         'transaction_cost' => [
-            'low' => 1,
-            'medium' => 2,
-            'high' => 3,
+            'low' => 100,
+            'medium' => 500,
+            'high' => 1000,
         ],
         'reliability' => [
             'high' => 1,
-            'medium' => 2,
-            'low' => 3,
+            'medium' => 3,
+            'low' => 5,
         ]
     ],
 ];

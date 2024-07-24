@@ -2,17 +2,20 @@
 
 namespace Ajosav\Blinqpay\Tests;
 
-use Ajosav\Blinqpay\BlinqpayServiceProvider;
 use Illuminate\Foundation\Application;
+use Ajosav\Blinqpay\BlinqpayServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TestCase extends BaseTestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
-        parent::setUp();
 
-        $this->withFactories(__DIR__ . './../database/factories');
+        parent::setUp();
     }
 
     /**
@@ -41,7 +44,7 @@ class TestCase extends BaseTestCase
         $app['config']->set('database.default', 'testdb');
         $app['config']->set('database.connections.testdb', [
             'driver' => 'sqlite',
-            'database' => ':memory'
+            'database' => ':memory:'
         ]);
     }
 }

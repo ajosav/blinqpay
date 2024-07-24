@@ -2,8 +2,13 @@
 
 namespace Ajosav\Blinqpay;
 
+use Ajosav\Blinqpay\Processors\BlinqpayPaymentProcessor;
+use Ajosav\Blinqpay\Processors\PaymentProcessorAbstraction;
 use Ajosav\Blinqpay\Router\PaymentRouter;
+use Ajosav\Blinqpay\Utils\FilePathUtil;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use Ajosav\Blinqpay\Facades\Blinqpay;
 
 class BlinqpayServiceProvider extends ServiceProvider
 {
@@ -20,8 +25,11 @@ class BlinqpayServiceProvider extends ServiceProvider
             $this->registerCommands();
         }
 
+        $this->registerFacades();
         $this->registerRoutes();
         $this->registerViews();
+        $this->registerMigrations();
+        $this->registerProccessors();
     }
 
     /**
@@ -32,7 +40,7 @@ class BlinqpayServiceProvider extends ServiceProvider
     public function register()
     {
         // register the package config
-        $this->mergeConfigFrom(__DIR__ . '/../config/blinqpay.php', 'cliqpay');
+        $this->mergeConfigFrom(__DIR__ . '/../config/blinqpay.php', 'blinqpay');
     }
 
     /**
@@ -41,9 +49,7 @@ class BlinqpayServiceProvider extends ServiceProvider
      */
     protected function registerCommands()
     {
-        $this->commands([
-
-        ]);
+        $this->commands([]);
     }
 
     /**
@@ -86,8 +92,31 @@ class BlinqpayServiceProvider extends ServiceProvider
     public function registerFacades()
     {
         $this->app->singleton('Blinqpay', function ($app) {
-            return \Ajosav\Blinqpay\Blinqpay(PaymentRouter::class);
+            return new \Ajosav\Blinqpay\Blinqpay(new PaymentRouter);
         });
     }
 
+    public function registerProccessors()
+    {
+        $processors = [
+            BlinqpayPaymentProcessor::class
+        ];
+        $namespace = config('blinqpay.processor_namespace', 'App\\Cliqpay\\Processors');
+        $path = FilePathUtil::getAppPathFromNamespace($namespace);
+
+        if (File::isDirectory($path)) {
+
+            $files = File::files($path);
+
+            foreach ($files as $file) {
+                $className = FilePathUtil::pathFromNamespace($namespace, basename($file, '.php'));
+
+                if (class_exists($className) && is_subclass_of($className, PaymentProcessorAbstraction::class)) {
+                    $processors[] = $className::register();
+                }
+            }
+        }
+
+        Blinqpay::setProcessors($processors);
+    }
 }
