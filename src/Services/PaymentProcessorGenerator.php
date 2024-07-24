@@ -10,7 +10,7 @@ class PaymentProcessorGenerator
 {
     public function generate(string $name): string
     {
-        $namespace = config('blinqpay.processor_namespace', 'App\\Cliqpay\\Processors');
+        $namespace = config('blinqpay.processor_namespace', 'App\\Blinqpay\\Processors');
 
         // Checking if processor already exists
         $file_exists = File::exists(FilePathUtil::pathFromNamespace($namespace, $name));
