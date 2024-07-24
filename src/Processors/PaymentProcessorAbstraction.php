@@ -12,18 +12,13 @@ abstract class PaymentProcessorAbstraction
     /**
      * @var PaymentProcessorInterface
      */
-    protected PaymentProcessorInterface $payment_processor;
+    public PaymentProcessorInterface $payment_processor;
 
     /**
      * @param PaymentProcessorInterface $payment_processor
      */
     public function __construct(PaymentProcessorInterface $payment_processor)
     {
-    }
-
-    public static function register(): string
-    {
-        return static::class;
     }
 
     /**
@@ -36,10 +31,10 @@ abstract class PaymentProcessorAbstraction
     }
 
     /**
-     * @param int $amount
+     * @param float $amount
      * @param string|null $currency
      * @return mixed
      */
-    public abstract function process(int $amount, ?string $currency = 'NGN');
+    public abstract function process(float $amount, ?string $currency = 'NGN');
 
 }

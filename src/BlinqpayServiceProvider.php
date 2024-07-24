@@ -2,8 +2,7 @@
 
 namespace Ajosav\Blinqpay;
 
-use Ajosav\Blinqpay\Processors\BlinqpayPaymentProcessor;
-use Ajosav\Blinqpay\Processors\PaymentProcessorAbstraction;
+use Ajosav\Blinqpay\Processors\BasePaymentProcessor;
 use Ajosav\Blinqpay\Router\PaymentRouter;
 use Ajosav\Blinqpay\Utils\FilePathUtil;
 use Illuminate\Support\Facades\File;
@@ -98,9 +97,7 @@ class BlinqpayServiceProvider extends ServiceProvider
 
     public function registerProccessors()
     {
-        $processors = [
-            BlinqpayPaymentProcessor::class
-        ];
+        $processors = [];
         $namespace = config('blinqpay.processor_namespace', 'App\\Cliqpay\\Processors');
         $path = FilePathUtil::getAppPathFromNamespace($namespace);
 
@@ -111,7 +108,7 @@ class BlinqpayServiceProvider extends ServiceProvider
             foreach ($files as $file) {
                 $className = FilePathUtil::pathFromNamespace($namespace, basename($file, '.php'));
 
-                if (class_exists($className) && is_subclass_of($className, PaymentProcessorAbstraction::class)) {
+                if (class_exists($className) && is_subclass_of($className, BasePaymentProcessor::class)) {
                     $processors[] = $className::register();
                 }
             }

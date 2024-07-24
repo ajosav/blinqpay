@@ -33,8 +33,8 @@ class PaymentProcessor extends PaymentProcessorAbstraction
         throw new PaymentProcessorException('The payment processor provided isn\'t recognized');
     }
 
-    public function process(int $amount, ?string $currency = 'NGN')
+    public function process(float $amount, ?string $currency = 'NGN')
     {
-        // TODO: Implement process() method.
+        return $this->payment_processor->process($amount, $currency);
     }
 }
