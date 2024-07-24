@@ -1,0 +1,15 @@
+<?php
+
+namespace [namespace];
+
+use Ajosav\Blinqpay\Processors\BasePaymentProcessor;
+
+class [class] extends BasePaymentProcessor
+{
+    public function process(float $amount, ?string $currency = 'NGN'): bool
+    {
+        // Implement process action.
+        return true;
+    }
+
+}

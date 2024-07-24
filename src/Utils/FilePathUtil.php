@@ -42,9 +42,9 @@ class FilePathUtil
         return ucfirst(array_pop($path));
     }
 
-    protected function ensureDirectoryExists($namespace, $relativePath)
+    public static function ensureDirectoryExists($namespace, $relativePath)
     {
-        $path = $this->pathFromNamespace($namespace, $relativePath);
+        $path = self::pathFromNamespace($namespace, $relativePath);
 
         if (!File::isDirectory(dirname($path))) {
             File::makeDirectory(dirname($path), 0777, $recursive = true, $force = true);

@@ -2,6 +2,7 @@
 
 namespace Ajosav\Blinqpay;
 
+use Ajosav\Blinqpay\Command\PaymentProcessorCommand;
 use Ajosav\Blinqpay\Processors\BasePaymentProcessor;
 use Ajosav\Blinqpay\Router\PaymentRouter;
 use Ajosav\Blinqpay\Utils\FilePathUtil;
@@ -48,7 +49,9 @@ class BlinqpayServiceProvider extends ServiceProvider
      */
     protected function registerCommands()
     {
-        $this->commands([]);
+        $this->commands([
+            PaymentProcessorCommand::class
+        ]);
     }
 
     /**
