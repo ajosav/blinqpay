@@ -1,0 +1,32 @@
+{
+  "name": "ajosav/blinqpay",
+  "license": "MIT",
+  "description": "Package that intelligently routes payment transactions to the most suitable payment processor",
+  "autoload": {
+    "psr-4": {
+      "Ajosav\\Blinqpay\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Ajosav\\Blinqpay\\Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "joshua",
+      "email": "ajosavboy@gmail.com"
+    }
+  ],
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Ajosav\\Blinqpay\\BlinqpayServiceProvider"
+      ]
+    }
+  },
+  "require-dev": {
+    "orchestra/testbench": "^9.2",
+    "mockery/mockery": "^1.6"
+  }
+}

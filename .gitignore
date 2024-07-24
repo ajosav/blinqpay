@@ -1,0 +1,10 @@
+/.code
+/.idea
+/vendor
+composer.lock
+.php-cs-fixer.cache
+.phpunit.result.cache
+.phpunit.cache
+testbench/
+/coverage
+.DS_Store
