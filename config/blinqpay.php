@@ -13,4 +13,17 @@ return [
      * payments will only be processed by the default_processor
      */
     'auto_routing' => true,
+
+    'routing_rules' => [
+        'transaction_cost' => [
+            'low' => 1,
+            'medium' => 2,
+            'high' => 3,
+        ],
+        'reliability' => [
+            'high' => 1,
+            'medium' => 2,
+            'low' => 3,
+        ]
+    ],
 ];
