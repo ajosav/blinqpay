@@ -70,6 +70,6 @@ class PaymentProcessorManager
      */
     public function getFileNameFromSlug(string $slug): string
     {
-        return Str::slug(Str::trim(Str::squish($slug)));
+        return Str::studly(Str::title(str_replace('-', '_', $slug)));
     }
 }

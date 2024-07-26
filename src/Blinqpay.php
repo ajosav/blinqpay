@@ -20,7 +20,7 @@ class Blinqpay
 
     }
 
-    public function initiatePayment(?float $amount = null, ?string $currency = null): PaymentProvider
+    public function initiatePayment(?float $amount = null, ?string $currency = null, ?callable $callback = null): PaymentProvider
     {
         $payment_provider = new PaymentProvider($this->paymentRouter);
         if ($amount) {
@@ -31,7 +31,6 @@ class Blinqpay
             $payment_provider->setCurrency($currency);
         }
         return $payment_provider;
-
     }
 
     public function processor()

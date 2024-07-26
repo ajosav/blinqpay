@@ -116,7 +116,7 @@ class PaymentProcessorRepository
             $processor->loadMissing(['currencies', 'settings']);
         });
 
-        $processor_name = Str::studly(str_replace('-', '_', $processor->slug));
+        $processor_name = $this->paymentProcessorManager->getFileNameFromSlug($processor->slug);
         if (empty($this->paymentProcessorManager->getProcessorName($processor_name))) {
             $this->paymentProcessorManager->generate($processor_name);
         }

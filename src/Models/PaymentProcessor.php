@@ -73,7 +73,7 @@ class PaymentProcessor extends Model
         $transaction_cost = ($setting->fees_cap && $transaction_cost > $setting->fees_cap) ? $setting->fees_cap : $transaction_cost;
 
         return match (true) {
-            $transaction_cost <= $rule['min'] || $transaction_cost < $rule['medium'] => 3,
+            $transaction_cost <= $rule['low'] || $transaction_cost < $rule['medium'] => 3,
             $transaction_cost >= $rule['medium'] && $transaction_cost < $rule['high'] => 2,
             $transaction_cost >= $rule['high'] => 1,
             default => 0
