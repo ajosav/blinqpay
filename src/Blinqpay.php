@@ -2,21 +2,41 @@
 
 namespace Ajosav\Blinqpay;
 
+use Ajosav\Blinqpay\DTO\PaymentProcessorDto;
+use Ajosav\Blinqpay\Models\PaymentProcessor;
+use Ajosav\Blinqpay\Repositories\PaymentProcessorRepository;
 use Ajosav\Blinqpay\Router\PaymentRouter;
+use Illuminate\Database\Eloquent\Collection;
 
 class Blinqpay
 {
     protected $processors = [];
 
-    public function __construct(public readonly PaymentRouter $paymentRouter)
+    public function __construct(
+        public readonly PaymentRouter $paymentRouter,
+        public readonly PaymentProcessorRepository $paymentProcessorRepository
+    )
     {
 
     }
 
-    public function initiatePayment(float $amount, string $currency = 'NGN'): ?string
+    public function initiatePayment(?float $amount = null, ?string $currency = null): PaymentProvider
     {
-        $payment_transaction = $this->paymentRouter->initiatePayment($amount, $currency);
-        return null;
+        $payment_provider = new PaymentProvider($this->paymentRouter);
+        if ($amount) {
+            $payment_provider->setAmount($amount);
+        }
+
+        if ($currency) {
+            $payment_provider->setCurrency($currency);
+        }
+        return $payment_provider;
+
+    }
+
+    public function processor()
+    {
+        return new Processor($this->paymentProcessorRepository);
     }
 
     public function setProcessors(array $processors)
