@@ -22,7 +22,7 @@ class PaymentProcessor extends Model
      */
     public function currencies(): BelongsToMany
     {
-        return $this->belongsToMany(BlinqpayCurrency::class, 'payment_processor_currencies');
+        return $this->belongsToMany(BlinqpayCurrency::class, 'payment_processor_currencies', 'payment_processor_id', 'currency_id');
     }
 
     /**
