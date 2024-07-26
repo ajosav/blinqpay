@@ -4,6 +4,7 @@ namespace Ajosav\Blinqpay;
 
 use Ajosav\Blinqpay\Command\PaymentProcessorCommand;
 use Ajosav\Blinqpay\Processors\BasePaymentProcessor;
+use Ajosav\Blinqpay\Repositories\PaymentProcessorRepository;
 use Ajosav\Blinqpay\Router\PaymentRouter;
 use Ajosav\Blinqpay\Utils\FilePathUtil;
 use Illuminate\Support\Facades\File;
@@ -94,7 +95,8 @@ class BlinqpayServiceProvider extends ServiceProvider
     public function registerFacades()
     {
         $this->app->singleton('Blinqpay', function ($app) {
-            return new \Ajosav\Blinqpay\Blinqpay(new PaymentRouter);
+            $repository = app(PaymentProcessorRepository::class);
+            return new \Ajosav\Blinqpay\Blinqpay(new PaymentRouter, $repository);
         });
     }
 
