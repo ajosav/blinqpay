@@ -12,7 +12,7 @@ class CreatePaymentProcessorsTable extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('slug')->unique();
-            $table->enum('status', ['active', 'inactive']);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }
