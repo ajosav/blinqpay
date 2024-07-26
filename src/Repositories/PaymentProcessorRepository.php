@@ -54,7 +54,7 @@ class PaymentProcessorRepository
      */
     public function findAll(): Collection
     {
-        return $this->paymentProcessorModel->with('settings', 'currencies')->all();
+        return $this->paymentProcessorModel->with('settings', 'currencies')->get();
     }
 
     /**
@@ -63,7 +63,7 @@ class PaymentProcessorRepository
      */
     public function findOne(string $slug): PaymentProcessor
     {
-        return $this->paymentProcessorModel->where('slug', $slug)->firstOrFail();
+        return $this->paymentProcessorModel->with('settings', 'currencies')->where('slug', $slug)->firstOrFail();
     }
 
     /**
@@ -97,16 +97,21 @@ class PaymentProcessorRepository
             ],
             [
                 'slug' => $slug,
-                'status' => $paymentProcessorDto
+                'status' => $paymentProcessorDto->status
             ]
         ), function (PaymentProcessor $processor) use ($paymentProcessorDto) {
             $processor->currencies()->sync($paymentProcessorDto->currency_ids);
-
             $processor_settings = $processor->settings;
-            $processor_settings->fees_percentage = $paymentProcessorDto->fees_percentage ?? $processor_settings->fees_percentage;
-            $processor_settings->fees_cap = $paymentProcessorDto->fees_cap ?? $processor_settings->fees_cap;
-            $processor_settings->reliability = $paymentProcessorDto->reliability ?? 1;
-            $processor->save();
+            $processor->settings()->updateOrCreate(
+                [
+                    'payment_processor_id' => $processor->id
+                ],
+                [
+                    'fees_percentage' => $paymentProcessorDto->fees_percentage ?? $processor_settings->fees_percentage,
+                    'fees_cap' => $paymentProcessorDto->fees_cap ?? $processor_settings->fees_cap,
+                    'reliability' => $paymentProcessorDto->reliability ?? $processor_settings->reliability
+                ]
+            );
 
             $processor->loadMissing(['currencies', 'settings']);
         });
