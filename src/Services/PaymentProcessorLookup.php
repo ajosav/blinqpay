@@ -44,7 +44,7 @@ class PaymentProcessorLookup
                                         ->whereStatus('active')
                                         ->whereHas('currencies',
                                             fn (Builder $currency) =>
-                                            $currency->whereIn('code', $this->currency)
+                                            $currency->where('code', $this->currency)
                                         )->get();
         return $this;
     }
@@ -60,7 +60,7 @@ class PaymentProcessorLookup
 
         throw_if($this->payment_processors->isEmpty(), new PaymentProcessorException('No suitable payment processor.'));
 
-        $this->payment_processors = $this->payment_processors->map->computeScore($this->amount);
+        $this->payment_processors = $this->payment_processors->map->appendScore($this->amount);
         return $this;
     }
 

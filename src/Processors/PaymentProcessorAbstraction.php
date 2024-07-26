@@ -3,6 +3,7 @@
 namespace Ajosav\Blinqpay\Processors;
 
 use Ajosav\Blinqpay\Contracts\PaymentProcessorInterface;
+use Ajosav\Blinqpay\PaymentTransactionLogger;
 
 /**
  *
@@ -12,15 +13,7 @@ abstract class PaymentProcessorAbstraction
     /**
      * @var PaymentProcessorInterface
      */
-    public PaymentProcessorInterface $payment_processor;
-
-    /**
-     * @param PaymentProcessorInterface $payment_processor
-     */
-    public function __construct(PaymentProcessorInterface $payment_processor)
-    {
-    }
-
+    protected PaymentProcessorInterface $payment_processor;
     /**
      * @param PaymentProcessorInterface $payment_processor
      * @return void
@@ -33,8 +26,9 @@ abstract class PaymentProcessorAbstraction
     /**
      * @param float $amount
      * @param string|null $currency
+     * @param callable|null $callback
      * @return mixed
      */
-    public abstract function process(float $amount, ?string $currency = 'NGN');
+    public abstract function processPayment(float $amount, ?string $currency = 'NGN', ?callable $callback = null): PaymentTransactionLogger;
 
 }

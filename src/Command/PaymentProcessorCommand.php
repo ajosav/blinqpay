@@ -2,7 +2,7 @@
 
 namespace Ajosav\Blinqpay\Command;
 
-use Ajosav\Blinqpay\Services\PaymentProcessorGenerator;
+use Ajosav\Blinqpay\Services\PaymentProcessorManager;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -27,7 +27,7 @@ class PaymentProcessorCommand extends Command
      *
      * @return mixed
      */
-    public function handle(PaymentProcessorGenerator $processorGenerator)
+    public function handle(PaymentProcessorManager $processorGenerator)
     {
         $name = $this->argument('name');
         try {

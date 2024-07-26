@@ -4,7 +4,9 @@ namespace Ajosav\Blinqpay\Router;
 
 use Ajosav\Blinqpay\Exceptions\ConfigurationNotPublishedException;
 use Ajosav\Blinqpay\Exceptions\PaymentProcessorException;
+use Ajosav\Blinqpay\Facades\Payment;
 use Ajosav\Blinqpay\Models\PaymentProcessor;
+use Ajosav\Blinqpay\PaymentTransactionLogger;
 use Ajosav\Blinqpay\Services\ConfigValidatorService;
 use Ajosav\Blinqpay\Services\PaymentProcessorLookup;
 
@@ -16,16 +18,17 @@ class PaymentRouter
         $this->validateRoutingRules();
     }
 
-    public function initiatePayment(float $amount, string $currency = 'NGN')
+    public function initiatePayment(float $amount, ?string $currency = 'NGN', ?callable $callback = null): PaymentTransactionLogger
     {
         $processor = $this->getSuitableProcessor($amount, $currency);
         //  Process payment using the Payment Bridge
+        return Payment::gateway($processor->slug)->processPayment($amount, $currency, $callback);
     }
 
     private function getSuitableProcessor(float $amount, string $currency): PaymentProcessor
     {
         $processor = (new PaymentProcessorLookup($amount, $currency))->findSuitablePaymentProcessor();
-        throw_if($processor, new PaymentProcessorException('No suitable payment processor.'));
+        throw_if(!$processor, new PaymentProcessorException('No suitable payment processor.'));
         return $processor;
     }
 

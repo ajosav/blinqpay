@@ -4,6 +4,7 @@ namespace Ajosav\Blinqpay\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -19,9 +20,9 @@ class PaymentProcessor extends Model
     /**
      * @return HasMany
      */
-    public function currencies(): HasMany
+    public function currencies(): BelongsToMany
     {
-        return $this->hasMany(BlinqpayCurrency::class);
+        return $this->belongsToMany(BlinqpayCurrency::class, 'payment_processor_currencies', 'payment_processor_id', 'currency_id');
     }
 
     /**
@@ -72,7 +73,7 @@ class PaymentProcessor extends Model
         $transaction_cost = ($setting->fees_cap && $transaction_cost > $setting->fees_cap) ? $setting->fees_cap : $transaction_cost;
 
         return match (true) {
-            $transaction_cost <= $rule['min'] || $transaction_cost < $rule['medium'] => 3,
+            $transaction_cost <= $rule['low'] || $transaction_cost < $rule['medium'] => 3,
             $transaction_cost >= $rule['medium'] && $transaction_cost < $rule['high'] => 2,
             $transaction_cost >= $rule['high'] => 1,
             default => 0

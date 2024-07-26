@@ -4,7 +4,8 @@
   "description": "Package that intelligently routes payment transactions to the most suitable payment processor",
   "autoload": {
     "psr-4": {
-      "Ajosav\\Blinqpay\\": "src/"
+      "Ajosav\\Blinqpay\\": "src/",
+      "Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
