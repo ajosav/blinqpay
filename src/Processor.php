@@ -41,7 +41,7 @@ class Processor
     /**
      * @return Collection
      */
-    public function getAll(): Collection
+    public function all(): Collection
     {
         return $this->paymentProcessorRepository->findAll();
     }
