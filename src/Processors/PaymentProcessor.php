@@ -5,9 +5,8 @@ namespace Ajosav\Blinqpay\Processors;
 use Ajosav\Blinqpay\Contracts\PaymentProcessorInterface;
 use Ajosav\Blinqpay\Exceptions\PaymentProcessorException;
 use Ajosav\Blinqpay\Facades\Blinqpay;
-use Ajosav\Blinqpay\PaymentTransactionLogger;
+use Ajosav\Blinqpay\Models\PaymentTransactionLogger;
 use Ajosav\Blinqpay\Services\PaymentProcessorManager;
-use Illuminate\Support\Str;
 use ReflectionClass;
 use function PHPUnit\Framework\assertInstanceOf;
 use Ajosav\Blinqpay\Models\PaymentProcessor as PaymentProcessorModel;
@@ -41,15 +40,18 @@ class PaymentProcessor extends PaymentProcessorAbstraction
         $gateway = $this->paymentProcessorManager->getFileNameFromSlug($gateway);
 
         if (empty(Blinqpay::getSupportedProcessors())) {
-            $processor = str_replace('.php', '', $this->paymentProcessorManager->getProcessorName($gateway));
+            $processor = $this->paymentProcessorManager->getClassPath($gateway);
+
             return new $processor;
         }
+
         foreach (Blinqpay::getSupportedProcessors() as $processor) {
             $class = new ReflectionClass($processor);
             if ($class->getShortName() === $gateway) {
-                return $processor;
+                return new $processor;
             }
         }
+
         throw new PaymentProcessorException('The payment processor provided isn\'t recognized');
     }
 

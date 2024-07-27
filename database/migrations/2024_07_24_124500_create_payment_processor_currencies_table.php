@@ -11,7 +11,7 @@ class CreatePaymentProcessorCurrenciesTable extends Migration
         Schema::create('payment_processor_currencies', function (Blueprint $table) {
             $table->increments('id');
             $table->foreignId('payment_processor_id')->constrained('payment_processors')->cascadeOnDelete();
-            $table->foreignId('currency_id')->constrained('currencies')->cascadeOnDelete();
+            $table->foreignId('currency_id')->constrained('blinqpay_currencies')->cascadeOnDelete();
         });
     }
 

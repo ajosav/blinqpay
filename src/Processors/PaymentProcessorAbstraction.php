@@ -3,7 +3,7 @@
 namespace Ajosav\Blinqpay\Processors;
 
 use Ajosav\Blinqpay\Contracts\PaymentProcessorInterface;
-use Ajosav\Blinqpay\PaymentTransactionLogger;
+use Ajosav\Blinqpay\Models\PaymentTransactionLogger;
 
 /**
  *

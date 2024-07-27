@@ -1,13 +1,13 @@
 <?php
 
-namespace Ajosav\Blinqpay;
+namespace Ajosav\Blinqpay\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentTransactionLogger extends model
 {
 
-    protected $gurded = ['id'];
+    protected $guarded = ['id'];
 
     public static function booted(): void
     {

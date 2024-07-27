@@ -113,12 +113,12 @@ class BlinqpayServiceProvider extends ServiceProvider
         $path = FilePathUtil::getAppPathFromNamespace($namespace);
 
         if (File::isDirectory($path)) {
-
             $files = File::files($path);
+            $paymentProcessorManager = app(PaymentProcessorManager::class);
 
             foreach ($files as $file) {
-                $className = FilePathUtil::pathFromNamespace($namespace, basename($file, '.php'));
-
+                $file_name = str_replace('.php', '', $file->getBasename());
+                $className = $paymentProcessorManager->getClassPath($file_name);
                 if (class_exists($className) && is_subclass_of($className, BasePaymentProcessor::class)) {
                     $processors[] = $className::register();
                 }

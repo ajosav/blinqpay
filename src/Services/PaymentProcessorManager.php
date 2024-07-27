@@ -30,6 +30,16 @@ class PaymentProcessorManager
     }
 
     /**
+     * @param $name
+     * @return string
+     */
+    public function getClassPath($name): string
+    {
+        return File::exists(FilePathUtil::pathFromNamespace($this->namespace, $name)) ?
+            FilePathUtil::classNamespace($this->namespace, $name) . '\\' . FilePathUtil::className($name) : '';
+    }
+
+    /**
      * @param string $name
      * @return string
      */
