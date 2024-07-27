@@ -1,12 +1,13 @@
 <?php
 
-namespace Ajosav\Blinqpay\Command;
+namespace Ajosav\Blinqpay\Commands;
 
 use Ajosav\Blinqpay\Services\PaymentProcessorManager;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Throwable;
 
-class PaymentProcessorCommand extends Command
+class PaymentProcessorCommand extends Command implements PromptsForMissingInput
 {
     /**
      * The name and signature of the console command.
@@ -25,7 +26,7 @@ class PaymentProcessorCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle(PaymentProcessorManager $processorGenerator)
     {
@@ -34,6 +35,7 @@ class PaymentProcessorCommand extends Command
             $class_name = $processorGenerator->generate($name);
             $this->info($class_name . ' payment processor created successfully');
         } catch (Throwable $e) {
+            report($e);
             $this->error($e->getMessage());
         }
         return;

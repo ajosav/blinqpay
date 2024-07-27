@@ -2,7 +2,7 @@
 
 namespace Ajosav\Blinqpay;
 
-use Ajosav\Blinqpay\Command\PaymentProcessorCommand;
+use Ajosav\Blinqpay\Commands\PaymentProcessorCommand;
 use Ajosav\Blinqpay\Processors\BasePaymentProcessor;
 use Ajosav\Blinqpay\Processors\PaymentProcessor;
 use Ajosav\Blinqpay\Repositories\PaymentProcessorRepository;

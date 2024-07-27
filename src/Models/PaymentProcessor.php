@@ -18,7 +18,7 @@ class PaymentProcessor extends Model
     protected $guarded = ['id'];
 
     /**
-     * @return HasMany
+     * @return BelongsToMany
      */
     public function currencies(): BelongsToMany
     {

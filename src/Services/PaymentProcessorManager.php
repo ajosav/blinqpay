@@ -49,12 +49,7 @@ class PaymentProcessorManager
         $file_exists = File::exists(FilePathUtil::pathFromNamespace($this->namespace, $name));
         throw_if($file_exists, new FileAlreadyExistException('File already exists'));
 
-        $content = preg_replace_array(
-            ['/\[namespace\]/', '/\[class\]/'],
-            [FilePathUtil::classNamespace($this->namespace, $name), FilePathUtil::className($name)],
-            file_get_contents(__DIR__ . '/stubs/PaymentProcessor.stub')
-        );
-
+        $content = $this->getStubContent($name);
         FilePathUtil::ensureDirectoryExists($this->namespace, $name);
         File::put(FilePathUtil::pathFromNamespace($this->namespace, $name), $content);
         return FilePathUtil::className($name);
@@ -81,5 +76,18 @@ class PaymentProcessorManager
     public function getFileNameFromSlug(string $slug): string
     {
         return Str::studly(Str::title(str_replace('-', '_', $slug)));
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getStubContent(string $name): string
+    {
+        return preg_replace_array(
+            ['/\[namespace\]/', '/\[class\]/'],
+            [FilePathUtil::classNamespace($this->namespace, $name), FilePathUtil::className($name)],
+            file_get_contents(__DIR__ . '/stubs/PaymentProcessor.stub')
+        );
     }
 }

@@ -33,7 +33,7 @@ class Blinqpay
         return $payment_provider;
     }
 
-    public function processor()
+    public function processor(): Processor
     {
         return new Processor($this->paymentProcessorRepository);
     }

@@ -4,7 +4,7 @@ return [
     /**
      * This value sets the root namespace for payment processor classes in your application.
      */
-    'processor_namespace' => env('PROCESSOR_NAMESPACE', 'App\\Cliqpay\\Processors'),
+    'processor_namespace' => env('PROCESSOR_NAMESPACE', 'App\\Blinqpay\\Processors'),
 
     /**
      * This provider will be used to process payments when auto routing is disabled
