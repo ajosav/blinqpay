@@ -103,13 +103,11 @@ class PaymentProcessorRepository
             $processor->currencies()->sync($paymentProcessorDto->currency_ids);
             $processor_settings = $processor->settings;
             $processor->settings()->updateOrCreate(
+                [],
                 [
-                    'payment_processor_id' => $processor->id
-                ],
-                [
-                    'fees_percentage' => $paymentProcessorDto->fees_percentage ?? $processor_settings->fees_percentage,
-                    'fees_cap' => $paymentProcessorDto->fees_cap ?? $processor_settings->fees_cap,
-                    'reliability' => $paymentProcessorDto->reliability ?? $processor_settings->reliability
+                    'fees_percentage' => $paymentProcessorDto->fees_percentage ?? $processor_settings?->fees_percentage,
+                    'fees_cap' => $paymentProcessorDto->fees_cap ?? $processor_settings?->fees_cap,
+                    'reliability' => $paymentProcessorDto->reliability ?? $processor_settings?->reliability ?? 1
                 ]
             );
 
