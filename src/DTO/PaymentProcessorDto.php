@@ -2,6 +2,8 @@
 
 namespace Ajosav\Blinqpay\DTO;
 
+use Ajosav\Blinqpay\Enums\ProcessorStatusEnum;
+
 class PaymentProcessorDto
 {
     public function __construct(
@@ -15,11 +17,15 @@ class PaymentProcessorDto
     {
     }
 
-    public static function fromArray(array $data)
+    /**
+     * @param array $data
+     * @return static
+     */
+    public static function fromArray(array $data): self
     {
         return new self(
             name: $data['name'],
-            status: $data['status'] ?? 'active',
+            status: $data['status'] ?? ProcessorStatusEnum::ACTIVE->value,
             currency_ids: $data['currency_ids'],
             fees_percentage: $data['fees_percentage'],
             fees_cap: $data['fees_cap'] ?? null,
