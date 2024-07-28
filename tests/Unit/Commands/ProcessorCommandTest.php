@@ -1,6 +1,6 @@
 <?php
 
-namespace Ajosav\Blinqpay\Tests\Unit;
+namespace Ajosav\Blinqpay\Tests\Unit\Commands;
 
 use Ajosav\Blinqpay\Services\PaymentProcessorManager;
 use Ajosav\Blinqpay\Tests\TestCase;

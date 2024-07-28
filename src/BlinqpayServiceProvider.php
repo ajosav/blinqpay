@@ -12,6 +12,7 @@ use Ajosav\Blinqpay\Utils\FilePathUtil;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Ajosav\Blinqpay\Facades\Blinqpay;
+use Ajosav\Blinqpay\Blinqpay as BaseBlinqpay;
 
 class BlinqpayServiceProvider extends ServiceProvider
 {
@@ -98,7 +99,7 @@ class BlinqpayServiceProvider extends ServiceProvider
     {
         $this->app->singleton('Blinqpay', function ($app) {
             $repository = app(PaymentProcessorRepository::class);
-            return new \Ajosav\Blinqpay\Blinqpay(new PaymentRouter, $repository);
+            return new BaseBlinqpay(new PaymentRouter, $repository);
         });
 
         $this->app->singleton('PaymentProcessorAdapter', function ($app) {
@@ -124,7 +125,6 @@ class BlinqpayServiceProvider extends ServiceProvider
                 }
             }
         }
-
         Blinqpay::setProcessors($processors);
     }
 }

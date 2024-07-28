@@ -7,7 +7,6 @@ use Ajosav\Blinqpay\Models\PaymentProcessor;
 use Ajosav\Blinqpay\Services\PaymentProcessorManager;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 /**
  *
@@ -32,8 +31,7 @@ class PaymentProcessorRepository
     public function create(PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
     {
         return DB::transaction(function() use ($paymentProcessorDto) {
-            $slug = Str::slug(Str::trim(Str::squish($paymentProcessorDto->name)));
-            return $this->createOrUpdateProcessor($slug, $paymentProcessorDto);
+            return $this->createOrUpdateProcessor($paymentProcessorDto);
         });
     }
 
@@ -45,7 +43,7 @@ class PaymentProcessorRepository
     public function update(string $slug, PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
     {
         return tap($this->findOne($slug), function(PaymentProcessor $processor) use ($paymentProcessorDto) {
-            return $this->createOrUpdateProcessor($processor->slug, $paymentProcessorDto);
+            return $this->createOrUpdateProcessor($paymentProcessorDto);
         });
     }
 
@@ -89,14 +87,13 @@ class PaymentProcessorRepository
      * @param PaymentProcessorDto $paymentProcessorDto
      * @return PaymentProcessor
      */
-    private function createOrUpdateProcessor($slug, PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
+    private function createOrUpdateProcessor(PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
     {
         $processor = tap($this->paymentProcessorModel::updateOrCreate(
             [
                 'name' => $paymentProcessorDto->name
             ],
             [
-                'slug' => $slug,
                 'status' => $paymentProcessorDto->status
             ]
         ), function (PaymentProcessor $processor) use ($paymentProcessorDto) {

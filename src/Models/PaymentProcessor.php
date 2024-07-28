@@ -5,8 +5,8 @@ namespace Ajosav\Blinqpay\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class PaymentProcessor extends Model
 {
@@ -16,6 +16,15 @@ class PaymentProcessor extends Model
      * @var string[]
      */
     protected $guarded = ['id'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (PaymentProcessor $processor) {
+            $processor->slug ??=  Str::slug(Str::trim(Str::squish($processor->name)));
+        });
+    }
 
     /**
      * @return BelongsToMany

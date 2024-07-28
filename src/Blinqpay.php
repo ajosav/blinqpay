@@ -2,11 +2,9 @@
 
 namespace Ajosav\Blinqpay;
 
-use Ajosav\Blinqpay\DTO\PaymentProcessorDto;
-use Ajosav\Blinqpay\Models\PaymentProcessor;
 use Ajosav\Blinqpay\Repositories\PaymentProcessorRepository;
 use Ajosav\Blinqpay\Router\PaymentRouter;
-use Illuminate\Database\Eloquent\Collection;
+use Ajosav\Blinqpay\Processor;
 
 class Blinqpay
 {
