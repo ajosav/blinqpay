@@ -3,6 +3,7 @@
 namespace Ajosav\Blinqpay;
 
 use Ajosav\Blinqpay\Models\BlinqpayCurrency;
+use Ajosav\Blinqpay\Models\PaymentTransactionLogger;
 use Ajosav\Blinqpay\Router\PaymentRouter;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +28,7 @@ class PaymentProvider
         return $this;
     }
 
-    public function setAmount(int $amount): self
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
         return $this;
