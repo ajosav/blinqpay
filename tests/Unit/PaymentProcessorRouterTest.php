@@ -2,6 +2,7 @@
 
 namespace Ajosav\Blinqpay\Tests\Unit;
 
+use Ajosav\Blinqpay\Enums\ProcessorStatusEnum;
 use Ajosav\Blinqpay\Exceptions\ConfigurationNotPublishedException;
 use Ajosav\Blinqpay\Exceptions\PaymentProcessorException;
 use Ajosav\Blinqpay\Models\BlinqpayCurrency;
@@ -115,7 +116,7 @@ class PaymentProcessorRouterTest extends TestCase
 
     private function getCustomProcessor(string $slug, string $currency_code, ?bool $should_create = false): ?PaymentProcessor
     {
-        $processor = PaymentProcessor::whereHas('currencies', fn($currency) => $currency->where('code', $currency_code))->first();
+        $processor = PaymentProcessor::where('status', ProcessorStatusEnum::ACTIVE->value)->whereHas('currencies', fn($currency) => $currency->where('code', $currency_code))->first();
         $processor_name = Str::title(str_replace('-', ' ', $slug));
 
         if (!$processor && $should_create) {

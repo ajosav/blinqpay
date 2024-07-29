@@ -68,7 +68,7 @@ class PaymentProcessorFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (PaymentProcessor $processor) {
-            if ($processor->status === ProcessorStatusEnum::ACTIVE->value) {
+            if ($processor->status ===ProcessorStatusEnum::ACTIVE->value) {
                 $currencies = BlinqpayCurrency::whereIn('code', ['USD', 'NGN', 'CAD', 'GHC'])->get();
                 $randomized_currency = $currencies->random(rand(1, $currencies->count()));
                 $processor->currencies()->sync($randomized_currency->pluck('id'));
