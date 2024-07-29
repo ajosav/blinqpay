@@ -17,10 +17,10 @@ class PaymentProcessorLookup
     protected $payment_processors;
 
     /**
-     * @param int $amount
+     * @param float $amount
      * @param string|null $currency
      */
-    public function __construct(public int $amount, public ?string $currency)
+    public function __construct(public float $amount, public ?string $currency)
     {
         $this->getPaymentProcessors()
             ->computePaymentProcessorScores();

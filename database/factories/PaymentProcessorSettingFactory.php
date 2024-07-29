@@ -1,9 +1,14 @@
 <?php
 
+namespace Database\Factories;
+
+use Ajosav\Blinqpay\Models\PaymentProcessorSetting;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PaymentProcessorSettingFactory extends Factory
 {
+    protected $model = PaymentProcessorSetting::class;
+
     public function definition()
     {
         return [

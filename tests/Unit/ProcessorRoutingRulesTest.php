@@ -43,4 +43,25 @@ class ProcessorRoutingRulesTest extends TestCase
         $validator = new ConfigValidatorService($routing_rules);
         $validator();
     }
+
+    public function test_validator_returns_true_when_configuration_matches_expected_structure()
+    {
+        $routing_rules = [
+            'routing_rules' => [
+                'transaction_cost' => [
+                    'high' => 1000,
+                    'medium' => 500,
+                    'low' => 100
+                ],
+                'reliability' => [
+                    'high' => 1,
+                    'medium' => 3,
+                    'low' => 5,
+                ]
+            ]
+        ];
+
+        $validator = new ConfigValidatorService($routing_rules);
+        $this->assertTrue($validator());
+    }
 }

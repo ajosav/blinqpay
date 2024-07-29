@@ -2,6 +2,7 @@
 
 namespace Ajosav\Blinqpay\Models;
 
+use Database\Factories\PaymentProcessorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,6 +25,16 @@ class PaymentProcessor extends Model
         static::creating(function (PaymentProcessor $processor) {
             $processor->slug ??=  Str::slug(Str::trim(Str::squish($processor->name)));
         });
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return PaymentProcessorFactory
+     */
+    protected static function newFactory(): PaymentProcessorFactory
+    {
+        return PaymentProcessorFactory::new();
     }
 
     /**
