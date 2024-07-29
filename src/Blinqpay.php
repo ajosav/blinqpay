@@ -4,7 +4,6 @@ namespace Ajosav\Blinqpay;
 
 use Ajosav\Blinqpay\Repositories\PaymentProcessorRepository;
 use Ajosav\Blinqpay\Router\PaymentRouter;
-use Ajosav\Blinqpay\Processor;
 
 class Blinqpay
 {

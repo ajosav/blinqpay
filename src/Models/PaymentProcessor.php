@@ -23,7 +23,7 @@ class PaymentProcessor extends Model
         parent::boot();
 
         static::creating(function (PaymentProcessor $processor) {
-            $processor->slug ??=  Str::slug(Str::trim(Str::squish($processor->name)));
+            $processor->slug ??= Str::slug(Str::trim(Str::squish($processor->name)));
         });
     }
 

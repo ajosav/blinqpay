@@ -30,55 +30,8 @@ class PaymentProcessorRepository
      */
     public function create(PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
     {
-        return DB::transaction(function() use ($paymentProcessorDto) {
+        return DB::transaction(function () use ($paymentProcessorDto) {
             return $this->createOrUpdateProcessor($paymentProcessorDto);
-        });
-    }
-
-    /**
-     * @param string $slug
-     * @param PaymentProcessorDto $paymentProcessorDto
-     * @return PaymentProcessor
-     */
-    public function update(string $slug, PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
-    {
-        return tap($this->findOne($slug), function(PaymentProcessor $processor) use ($paymentProcessorDto) {
-            return $this->createOrUpdateProcessor($paymentProcessorDto);
-        });
-    }
-
-    /**
-     * @return Collection
-     */
-    public function findAll(): Collection
-    {
-        return $this->paymentProcessorModel->with('settings', 'currencies')->get();
-    }
-
-    /**
-     * @param string $slug
-     * @return PaymentProcessor
-     */
-    public function findOne(string $slug): PaymentProcessor
-    {
-        return $this->paymentProcessorModel->with('settings', 'currencies')->where('slug', $slug)->firstOrFail();
-    }
-
-    /**
-     * @param string $slug
-     * @return ?bool
-     */
-    public function delete(string $slug): ?bool
-    {
-        $processor = $this->findOne($slug);
-        return DB::transaction(function () use ($processor) {
-            $processor->currencies()->delete();
-            $processor->settings()->delete();
-
-            // Delete processor class if it exists
-            $processor_class_name = $this->paymentProcessorManager->getFileNameFromSlug($processor->slug);
-            $this->paymentProcessorManager->delete($processor_class_name);
-            return $processor->delete();
         });
     }
 
@@ -117,6 +70,53 @@ class PaymentProcessorRepository
         }
         $processor->handler_class = str_replace('.php', '::class', $this->paymentProcessorManager->getProcessorName($processor_name));
         return $processor;
+    }
+
+    /**
+     * @param string $slug
+     * @param PaymentProcessorDto $paymentProcessorDto
+     * @return PaymentProcessor
+     */
+    public function update(string $slug, PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
+    {
+        return tap($this->findOne($slug), function (PaymentProcessor $processor) use ($paymentProcessorDto) {
+            return $this->createOrUpdateProcessor($paymentProcessorDto);
+        });
+    }
+
+    /**
+     * @param string $slug
+     * @return PaymentProcessor
+     */
+    public function findOne(string $slug): PaymentProcessor
+    {
+        return $this->paymentProcessorModel->with('settings', 'currencies')->where('slug', $slug)->firstOrFail();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function findAll(): Collection
+    {
+        return $this->paymentProcessorModel->with('settings', 'currencies')->get();
+    }
+
+    /**
+     * @param string $slug
+     * @return ?bool
+     */
+    public function delete(string $slug): ?bool
+    {
+        $processor = $this->findOne($slug);
+        return DB::transaction(function () use ($processor) {
+            $processor->currencies()->delete();
+            $processor->settings()->delete();
+
+            // Delete processor class if it exists
+            $processor_class_name = $this->paymentProcessorManager->getFileNameFromSlug($processor->slug);
+            $this->paymentProcessorManager->delete($processor_class_name);
+            return $processor->delete();
+        });
     }
 
 

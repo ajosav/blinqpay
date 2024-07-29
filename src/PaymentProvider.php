@@ -18,7 +18,8 @@ class PaymentProvider
     private $callback;
 
     public function __construct(public PaymentRouter $router)
-    {}
+    {
+    }
 
     public function setCurrency(string $code): self
     {

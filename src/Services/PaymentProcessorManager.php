@@ -57,11 +57,24 @@ class PaymentProcessorManager
 
     /**
      * @param string $name
+     * @return string
+     */
+    public function getStubContent(string $name): string
+    {
+        return preg_replace_array(
+            ['/\[namespace\]/', '/\[class\]/'],
+            [FilePathUtil::classNamespace($this->namespace, $name), FilePathUtil::className($name)],
+            file_get_contents(__DIR__ . '/stubs/PaymentProcessor.stub')
+        );
+    }
+
+    /**
+     * @param string $name
      * @return bool|null
      */
     public function delete(string $name): ?bool
     {
-       // Checking if processor already exists
+        // Checking if processor already exists
         $file_exists = File::exists(FilePathUtil::pathFromNamespace($this->namespace, $name));
         if ($file_exists) {
             return File::delete(FilePathUtil::pathFromNamespace($this->namespace, $name));
@@ -76,18 +89,5 @@ class PaymentProcessorManager
     public function getFileNameFromSlug(string $slug): string
     {
         return Str::studly(Str::title(str_replace('-', '_', $slug)));
-    }
-
-    /**
-     * @param string $name
-     * @return string
-     */
-    public function getStubContent(string $name): string
-    {
-        return preg_replace_array(
-            ['/\[namespace\]/', '/\[class\]/'],
-            [FilePathUtil::classNamespace($this->namespace, $name), FilePathUtil::className($name)],
-            file_get_contents(__DIR__ . '/stubs/PaymentProcessor.stub')
-        );
     }
 }

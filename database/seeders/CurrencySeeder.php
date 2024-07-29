@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 class CurrencySeeder extends Seeder
 {
     public const SEED_CHUNK_SIZE = 500;
+
     /**
      * Run the database seeds
      */
@@ -18,7 +19,7 @@ class CurrencySeeder extends Seeder
         if ($file_exists) {
             $currencies = json_decode(File::get(__DIR__ . '/../json_data/currencies.json'), true);
             $currencies_chunk = array_chunk(
-                array_map(fn ($currency) => ['name' => $currency['name'], 'code' => $currency['code']], $currencies),
+                array_map(fn($currency) => ['name' => $currency['name'], 'code' => $currency['code']], $currencies),
                 self::SEED_CHUNK_SIZE
             );
 

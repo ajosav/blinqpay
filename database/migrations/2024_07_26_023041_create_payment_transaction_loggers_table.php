@@ -1,9 +1,9 @@
 <?php
 
+use Ajosav\Blinqpay\Models\BlinqpayCurrency;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Ajosav\Blinqpay\Models\BlinqpayCurrency;
 
 class CreatePaymentTransactionLoggersTable extends Migration
 {

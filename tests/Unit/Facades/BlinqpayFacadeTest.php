@@ -2,10 +2,10 @@
 
 namespace Ajosav\Blinqpay\Tests\Unit\Facades;
 
+use Ajosav\Blinqpay\Facades\Blinqpay as BlinqpayFacade;
 use Ajosav\Blinqpay\PaymentProvider;
 use Ajosav\Blinqpay\Processor;
 use Ajosav\Blinqpay\Tests\TestCase;
-use Ajosav\Blinqpay\Facades\Blinqpay as BlinqpayFacade;
 
 class BlinqpayFacadeTest extends TestCase
 {

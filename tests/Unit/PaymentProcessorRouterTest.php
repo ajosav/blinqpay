@@ -17,6 +17,36 @@ class PaymentProcessorRouterTest extends TestCase
 {
     protected $processors;
 
+    public static function happyPaymentDataProvider(): array
+    {
+        return [
+            [4000, 'NGN', 'ngn-processor'],
+            [150, 'USD', 'usd-processor'],
+            [70000, 'NGN', 'ngn-processor'],
+            [3200, 'NGN', 'ngn-processor'],
+            [4.56, 'USD', 'usd-processor'],
+            [600, 'GHC', 'ghc-processor'],
+            [6000, 'CAD', 'cad-processor'],
+            [70000, 'GHC', 'ghc-processor'],
+            [1000000, 'NGN', 'ngn-processor'],
+            [2200, 'CAD', 'cad-processor']
+        ];
+    }
+
+    public static function failurePaymentDataProvider(): array
+    {
+        return [
+            [4000, 'GBP', 'gbp-processor'],
+            [150, 'UAH', 'uah-processor'],
+            [70000, 'TVD', 'tvd-processor'],
+            [3200, 'TRL', 'trl-processor'],
+            [4.56, 'TTD', 'ttd-processor'],
+            [600, 'THB', 'thb-processor'],
+            [6000, 'ZAR', 'zar-processor'],
+            [70000, 'LKR', 'lkr-processor']
+        ];
+    }
+
     public function setUp(): void
     {
         parent::setUp();
@@ -50,22 +80,6 @@ class PaymentProcessorRouterTest extends TestCase
         new PaymentRouter();
     }
 
-    public static function happyPaymentDataProvider(): array
-    {
-        return [
-            [4000, 'NGN', 'ngn-processor'],
-            [150, 'USD', 'usd-processor'],
-            [70000, 'NGN', 'ngn-processor'],
-            [3200, 'NGN', 'ngn-processor'],
-            [4.56, 'USD', 'usd-processor'],
-            [600, 'GHC', 'ghc-processor'],
-            [6000, 'CAD', 'cad-processor'],
-            [70000, 'GHC', 'ghc-processor'],
-            [1000000, 'NGN', 'ngn-processor'],
-            [2200, 'CAD', 'cad-processor']
-        ];
-    }
-
     #[DataProvider('happyPaymentDataProvider')]
     public function test_most_suitable_processor_is_selected_based_on_the_transaction_cost_and_currency($amount, $currency_code, $expected_processor_slug)
     {
@@ -76,42 +90,16 @@ class PaymentProcessorRouterTest extends TestCase
         $this->assertEquals($recommended_processor->slug, $custom_processor->slug);
     }
 
-    public static function failurePaymentDataProvider(): array
-    {
-        return [
-            [4000, 'GBP', 'gbp-processor'],
-            [150, 'UAH', 'uah-processor'],
-            [70000, 'TVD', 'tvd-processor'],
-            [3200, 'TRL', 'trl-processor'],
-            [4.56, 'TTD', 'ttd-processor'],
-            [600, 'THB', 'thb-processor'],
-            [6000, 'ZAR', 'zar-processor'],
-            [70000, 'LKR', 'lkr-processor']
-        ];
-    }
-
-    #[DataProvider('failurePaymentDataProvider')]
-    public function test_payment_processor_exception_is_thrown_when_suitable_processor_is_not_found($amount, $currency_code, $expected_processor_slug)
-    {
-        $this->processors = $this->createProcessor();
-        $custom_processor = $this->getCustomProcessor($expected_processor_slug, $currency_code);
-        $this->expectException(PaymentProcessorException::class);
-        $this->expectExceptionMessage('No suitable payment processor.');
-        $router = new PaymentRouter();
-        $recommended_processor = $router->getSuitableProcessor($amount, $currency_code);
-        $this->assertNotEquals($custom_processor?->slug, $recommended_processor?->slug);
-    }
-
     private function createProcessor()
     {
         return PaymentProcessor::factory()
-                            ->count(20)
-                            ->sequence(
-                                ['status' => 'active'],
-                                ['status' => 'inactive']
-                            )
-                            ->withSetting()
-                            ->create();
+            ->count(20)
+            ->sequence(
+                ['status' => 'active'],
+                ['status' => 'inactive']
+            )
+            ->withSetting()
+            ->create();
     }
 
     private function getCustomProcessor(string $slug, string $currency_code, ?bool $should_create = false): ?PaymentProcessor
@@ -142,5 +130,17 @@ class PaymentProcessorRouterTest extends TestCase
         ]);
 
         return $processor;
+    }
+
+    #[DataProvider('failurePaymentDataProvider')]
+    public function test_payment_processor_exception_is_thrown_when_suitable_processor_is_not_found($amount, $currency_code, $expected_processor_slug)
+    {
+        $this->processors = $this->createProcessor();
+        $custom_processor = $this->getCustomProcessor($expected_processor_slug, $currency_code);
+        $this->expectException(PaymentProcessorException::class);
+        $this->expectExceptionMessage('No suitable payment processor.');
+        $router = new PaymentRouter();
+        $recommended_processor = $router->getSuitableProcessor($amount, $currency_code);
+        $this->assertNotEquals($custom_processor?->slug, $recommended_processor?->slug);
     }
 }

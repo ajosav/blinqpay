@@ -14,6 +14,7 @@ abstract class PaymentProcessorAbstraction
      * @var PaymentProcessorInterface
      */
     protected PaymentProcessorInterface $payment_processor;
+
     /**
      * @param PaymentProcessorInterface $payment_processor
      * @return void

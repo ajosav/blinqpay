@@ -8,11 +8,6 @@ use Ajosav\Blinqpay\Tests\TestCase;
 
 class ProcessorRoutingRulesTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     public function test_router_throws_routing_exception_when_routing_rules_is_not_set()
     {
         $routing_rules = [];
@@ -63,5 +58,10 @@ class ProcessorRoutingRulesTest extends TestCase
 
         $validator = new ConfigValidatorService($routing_rules);
         $this->assertTrue($validator());
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
     }
 }

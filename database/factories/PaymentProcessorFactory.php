@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use Ajosav\Blinqpay\Enums\ProcessorStatusEnum;
 use Ajosav\Blinqpay\Models\BlinqpayCurrency;
 use Ajosav\Blinqpay\Models\PaymentProcessor;
-use Ajosav\Blinqpay\Enums\ProcessorStatusEnum;
 use Ajosav\Blinqpay\Models\PaymentProcessorSetting;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -68,7 +68,7 @@ class PaymentProcessorFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (PaymentProcessor $processor) {
-            if ($processor->status ===ProcessorStatusEnum::ACTIVE->value) {
+            if ($processor->status === ProcessorStatusEnum::ACTIVE->value) {
                 $currencies = BlinqpayCurrency::whereIn('code', ['USD', 'NGN', 'CAD', 'GHC'])->get();
                 $randomized_currency = $currencies->random(rand(1, $currencies->count()));
                 $processor->currencies()->sync($randomized_currency->pluck('id'));

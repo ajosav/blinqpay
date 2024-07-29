@@ -18,7 +18,7 @@ class PaymentTransactionLogger extends model
 
     public static function generateReference(): string
     {
-        $reference = 'BLINQ_'.mt_rand(100000000, 99999999999).time();
+        $reference = 'BLINQ_' . mt_rand(100000000, 99999999999) . time();
 
         while (self::where('reference', $reference)->exists()) {
             self::generateReference();

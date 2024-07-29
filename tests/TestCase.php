@@ -2,11 +2,10 @@
 
 namespace Ajosav\Blinqpay\Tests;
 
-use Illuminate\Foundation\Application;
 use Ajosav\Blinqpay\BlinqpayServiceProvider;
-use Orchestra\Testbench\TestCase as BaseTestCase;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
@@ -21,7 +20,7 @@ class TestCase extends BaseTestCase
 
     /**
      *
-     * @param  Application $app
+     * @param Application $app
      *
      * @return string[]
      */
@@ -35,10 +34,10 @@ class TestCase extends BaseTestCase
     /**
      * Define environment setup.
      *
-     * @api
-     *
      * @param Application $app
      * @return void
+     * @api
+     *
      */
     protected function getEnvironmentSetUp($app)
     {
