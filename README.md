@@ -35,11 +35,11 @@ php artisan migrate
 ## Usage
 ### Creating a new processor with artisan command
 
-The package provides a command that allows us to manually create a processor via the artisan command. This is mostly useful if you already have a list of processors in the database. The supporting class for the processor can be generated with the following artisan command:
+The package provides a command that allows us to manually create a processor via the Artisan command. This is mostly useful if you already have a list of processors in the database. The supporting class for the processor can be generated with the following Artisan command:
 ``` bash
 php artisan blinqpay:processor TestPaymentProcessor
 ```
-The command above will generate a class that extends BasePaymentProcessor
+The command above will generate a class that extends `BasePaymentProcessor`
 ```php
 <?php
 
@@ -58,9 +58,9 @@ class TestPaymentProcessor extends BasePaymentProcessor
 }
 
 ```
-The process method will contain the execution statement for the processor.
+The `process` method will contain the execution statement for the processor.
 > [!IMPORTANT]
-> When processors are generated with the artisan command, you need to ensure that a processor with the slug of the generated processor class exists in the `payment_processors` table. For the above payment processor, there should be a record with slug `test-payment-processor`.
+> When processors are generated with the Artisan command, you need to ensure that a processor with the slug of the generated processor class exists in the `payment_processors` table. For the above payment processor, there should be a record with slug `test-payment-processor`.
 > 
 > It is advised to use the [Creating processors with blinqpay facades](#creating-processors-with-blinq-facades)
 
@@ -91,7 +91,7 @@ $processor = Blinqpay::processor()
 > 
 > If you are wondering how we are retrieving currencies, the currencies are seeded when the migration file is executed.
 
-When the code above is executed, a new `FacadePaymentProcessor` class with be generate
+When the code above is executed, a new `FacadePaymentProcessor` class will be generate
 
 ```php
 <?php
@@ -111,14 +111,14 @@ class FacadePaymentProcessor extends BasePaymentProcessor
 }
 ````
 
-To configure the namespace where the generated file is saved, you can configure the namespace on the .env 
+To configure the namespace where the generated file is saved, you can configure the namespace in the .env 
 
 ```bash
 PROCESSOR_NAMESPACE = 'App\\Blinqpay\\Processors'
 ```
 
 ### Making payments with blinqpay
-This is where the auto routing feature of this package comes to play, the most suitable payment processor is used to process transactions based of the `reliability`, `currency` and `transaction` from your config `routing_rules`
+This is where the auto-routing feature of this package comes into play. The most suitable payment processor is used to process transactions based on the `reliability`, `currency` and `transaction_cost` from your config `routing_rules`
 
 Initiating a payment:
 ```php
