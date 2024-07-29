@@ -1,13 +1,13 @@
 <?php
 
-namespace Ajosav\Blinqpay;
+namespace Ajosav\Blinqpay\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentTransactionLogger extends model
 {
 
-    protected $gurded = ['id'];
+    protected $guarded = ['id'];
 
     public static function booted(): void
     {
@@ -18,7 +18,7 @@ class PaymentTransactionLogger extends model
 
     public static function generateReference(): string
     {
-        $reference = 'BLINQ_'.mt_rand(100000000, 99999999999).time();
+        $reference = 'BLINQ_' . mt_rand(100000000, 99999999999) . time();
 
         while (self::where('reference', $reference)->exists()) {
             self::generateReference();

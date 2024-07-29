@@ -2,11 +2,8 @@
 
 namespace Ajosav\Blinqpay;
 
-use Ajosav\Blinqpay\DTO\PaymentProcessorDto;
-use Ajosav\Blinqpay\Models\PaymentProcessor;
 use Ajosav\Blinqpay\Repositories\PaymentProcessorRepository;
 use Ajosav\Blinqpay\Router\PaymentRouter;
-use Illuminate\Database\Eloquent\Collection;
 
 class Blinqpay
 {
@@ -33,7 +30,7 @@ class Blinqpay
         return $payment_provider;
     }
 
-    public function processor()
+    public function processor(): Processor
     {
         return new Processor($this->paymentProcessorRepository);
     }

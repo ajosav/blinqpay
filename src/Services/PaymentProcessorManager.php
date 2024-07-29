@@ -30,6 +30,16 @@ class PaymentProcessorManager
     }
 
     /**
+     * @param $name
+     * @return string
+     */
+    public function getClassPath($name): string
+    {
+        return File::exists(FilePathUtil::pathFromNamespace($this->namespace, $name)) ?
+            FilePathUtil::classNamespace($this->namespace, $name) . '\\' . FilePathUtil::className($name) : '';
+    }
+
+    /**
      * @param string $name
      * @return string
      */
@@ -39,15 +49,23 @@ class PaymentProcessorManager
         $file_exists = File::exists(FilePathUtil::pathFromNamespace($this->namespace, $name));
         throw_if($file_exists, new FileAlreadyExistException('File already exists'));
 
-        $content = preg_replace_array(
+        $content = $this->getStubContent($name);
+        FilePathUtil::ensureDirectoryExists($this->namespace, $name);
+        File::put(FilePathUtil::pathFromNamespace($this->namespace, $name), $content);
+        return FilePathUtil::className($name);
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getStubContent(string $name): string
+    {
+        return preg_replace_array(
             ['/\[namespace\]/', '/\[class\]/'],
             [FilePathUtil::classNamespace($this->namespace, $name), FilePathUtil::className($name)],
             file_get_contents(__DIR__ . '/stubs/PaymentProcessor.stub')
         );
-
-        FilePathUtil::ensureDirectoryExists($this->namespace, $name);
-        File::put(FilePathUtil::pathFromNamespace($this->namespace, $name), $content);
-        return FilePathUtil::className($name);
     }
 
     /**
@@ -56,7 +74,7 @@ class PaymentProcessorManager
      */
     public function delete(string $name): ?bool
     {
-       // Checking if processor already exists
+        // Checking if processor already exists
         $file_exists = File::exists(FilePathUtil::pathFromNamespace($this->namespace, $name));
         if ($file_exists) {
             return File::delete(FilePathUtil::pathFromNamespace($this->namespace, $name));

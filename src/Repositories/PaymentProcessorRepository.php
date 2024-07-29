@@ -7,7 +7,6 @@ use Ajosav\Blinqpay\Models\PaymentProcessor;
 use Ajosav\Blinqpay\Services\PaymentProcessorManager;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 /**
  *
@@ -31,10 +30,46 @@ class PaymentProcessorRepository
      */
     public function create(PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
     {
-        return DB::transaction(function() use ($paymentProcessorDto) {
-            $slug = Str::slug(Str::trim(Str::squish($paymentProcessorDto->name)));
-            return $this->createOrUpdateProcessor($slug, $paymentProcessorDto);
+        return DB::transaction(function () use ($paymentProcessorDto) {
+            return $this->createOrUpdateProcessor($paymentProcessorDto);
         });
+    }
+
+    /**
+     * @param $slug
+     * @param PaymentProcessorDto $paymentProcessorDto
+     * @return PaymentProcessor
+     */
+    private function createOrUpdateProcessor(PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
+    {
+        $processor = tap($this->paymentProcessorModel::updateOrCreate(
+            [
+                'name' => $paymentProcessorDto->name
+            ],
+            [
+                'status' => $paymentProcessorDto->status
+            ]
+        ), function (PaymentProcessor $processor) use ($paymentProcessorDto) {
+            $processor->currencies()->sync($paymentProcessorDto->currency_ids);
+            $processor_settings = $processor->settings;
+            $processor->settings()->updateOrCreate(
+                [],
+                [
+                    'fees_percentage' => $paymentProcessorDto->fees_percentage ?? $processor_settings?->fees_percentage,
+                    'fees_cap' => $paymentProcessorDto->fees_cap ?? $processor_settings?->fees_cap,
+                    'reliability' => $paymentProcessorDto->reliability ?? $processor_settings?->reliability ?? 1
+                ]
+            );
+
+            $processor->loadMissing(['currencies', 'settings']);
+        });
+
+        $processor_name = $this->paymentProcessorManager->getFileNameFromSlug($processor->slug);
+        if (empty($this->paymentProcessorManager->getProcessorName($processor_name))) {
+            $this->paymentProcessorManager->generate($processor_name);
+        }
+        $processor->handler_class = str_replace('.php', '::class', $this->paymentProcessorManager->getProcessorName($processor_name));
+        return $processor;
     }
 
     /**
@@ -44,17 +79,9 @@ class PaymentProcessorRepository
      */
     public function update(string $slug, PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
     {
-        return tap($this->findOne($slug), function(PaymentProcessor $processor) use ($paymentProcessorDto) {
-            return $this->createOrUpdateProcessor($processor->slug, $paymentProcessorDto);
+        return tap($this->findOne($slug), function (PaymentProcessor $processor) use ($paymentProcessorDto) {
+            return $this->createOrUpdateProcessor($paymentProcessorDto);
         });
-    }
-
-    /**
-     * @return Collection
-     */
-    public function findAll(): Collection
-    {
-        return $this->paymentProcessorModel->with('settings', 'currencies')->get();
     }
 
     /**
@@ -64,6 +91,14 @@ class PaymentProcessorRepository
     public function findOne(string $slug): PaymentProcessor
     {
         return $this->paymentProcessorModel->with('settings', 'currencies')->where('slug', $slug)->firstOrFail();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function findAll(): Collection
+    {
+        return $this->paymentProcessorModel->with('settings', 'currencies')->get();
     }
 
     /**
@@ -82,46 +117,6 @@ class PaymentProcessorRepository
             $this->paymentProcessorManager->delete($processor_class_name);
             return $processor->delete();
         });
-    }
-
-    /**
-     * @param $slug
-     * @param PaymentProcessorDto $paymentProcessorDto
-     * @return PaymentProcessor
-     */
-    private function createOrUpdateProcessor($slug, PaymentProcessorDto $paymentProcessorDto): PaymentProcessor
-    {
-        $processor = tap($this->paymentProcessorModel::updateOrCreate(
-            [
-                'name' => $paymentProcessorDto->name
-            ],
-            [
-                'slug' => $slug,
-                'status' => $paymentProcessorDto->status
-            ]
-        ), function (PaymentProcessor $processor) use ($paymentProcessorDto) {
-            $processor->currencies()->sync($paymentProcessorDto->currency_ids);
-            $processor_settings = $processor->settings;
-            $processor->settings()->updateOrCreate(
-                [
-                    'payment_processor_id' => $processor->id
-                ],
-                [
-                    'fees_percentage' => $paymentProcessorDto->fees_percentage ?? $processor_settings->fees_percentage,
-                    'fees_cap' => $paymentProcessorDto->fees_cap ?? $processor_settings->fees_cap,
-                    'reliability' => $paymentProcessorDto->reliability ?? $processor_settings->reliability
-                ]
-            );
-
-            $processor->loadMissing(['currencies', 'settings']);
-        });
-
-        $processor_name = $this->paymentProcessorManager->getFileNameFromSlug($processor->slug);
-        if (empty($this->paymentProcessorManager->getProcessorName($processor_name))) {
-            $this->paymentProcessorManager->generate($processor_name);
-        }
-        $processor->handler_class = str_replace('.php', '::class', $this->paymentProcessorManager->getProcessorName($processor_name));
-        return $processor;
     }
 
 

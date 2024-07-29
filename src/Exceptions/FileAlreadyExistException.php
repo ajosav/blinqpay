@@ -2,8 +2,8 @@
 
 namespace Ajosav\Blinqpay\Exceptions;
 
-use PHPUnit\Event\Code\Throwable;
 use Exception;
+use PHPUnit\Event\Code\Throwable;
 
 class FileAlreadyExistException extends Exception
 {

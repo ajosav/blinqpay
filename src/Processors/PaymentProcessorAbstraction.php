@@ -3,7 +3,7 @@
 namespace Ajosav\Blinqpay\Processors;
 
 use Ajosav\Blinqpay\Contracts\PaymentProcessorInterface;
-use Ajosav\Blinqpay\PaymentTransactionLogger;
+use Ajosav\Blinqpay\Models\PaymentTransactionLogger;
 
 /**
  *
@@ -14,6 +14,7 @@ abstract class PaymentProcessorAbstraction
      * @var PaymentProcessorInterface
      */
     protected PaymentProcessorInterface $payment_processor;
+
     /**
      * @param PaymentProcessorInterface $payment_processor
      * @return void

@@ -17,42 +17,19 @@ class PaymentProcessorLookup
     protected $payment_processors;
 
     /**
-     * @param int $amount
+     * @param float $amount
      * @param string|null $currency
      */
-    public function __construct(public int $amount, public ?string $currency)
+    public function __construct(public float $amount, public ?string $currency)
     {
         $this->getPaymentProcessors()
             ->computePaymentProcessorScores();
     }
 
     /**
-     * @return PaymentProcessor|null
-     */
-    public function findSuitablePaymentProcessor(): ?PaymentProcessor
-    {
-        return $this->payment_processors->sortBy([['score', 'desc']])->first();
-    }
-
-    /**
      * @return $this
      */
-    private function getPaymentProcessors(): self
-    {
-        $this->payment_processors = PaymentProcessor::with('settings')
-                                        ->has('settings')
-                                        ->whereStatus('active')
-                                        ->whereHas('currencies',
-                                            fn (Builder $currency) =>
-                                            $currency->where('code', $this->currency)
-                                        )->get();
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    private function computePaymentProcessorScores():self
+    private function computePaymentProcessorScores(): self
     {
         if (!$this->payment_processors) {
             $this->getPaymentProcessors();
@@ -62,6 +39,28 @@ class PaymentProcessorLookup
 
         $this->payment_processors = $this->payment_processors->map->appendScore($this->amount);
         return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function getPaymentProcessors(): self
+    {
+        $this->payment_processors = PaymentProcessor::with('settings')
+            ->has('settings')
+            ->whereStatus('active')
+            ->whereHas('currencies',
+                fn(Builder $currency) => $currency->where('code', $this->currency)
+            )->get();
+        return $this;
+    }
+
+    /**
+     * @return PaymentProcessor|null
+     */
+    public function findSuitablePaymentProcessor(): ?PaymentProcessor
+    {
+        return $this->payment_processors->sortBy([['score', 'desc']])->first();
     }
 
 }

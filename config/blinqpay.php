@@ -4,21 +4,19 @@ return [
     /**
      * This value sets the root namespace for payment processor classes in your application.
      */
-    'processor_namespace' => env('PROCESSOR_NAMESPACE', 'App\\Cliqpay\\Processors'),
+    'processor_namespace' => env('PROCESSOR_NAMESPACE', 'App\\Blinqpay\\Processors'),
 
     /**
-     * This provider will be used to process payments when auto routing is disabled
-     * PS: When auto routing is turned off, default processor will be ignored
+     * The routing rule is used to predefine how payment processors should be selected
+     * Low: minimum value.
+     * Medium: medium value
+     * high: High value
+     *
+     * Example:
+     * Low represents that a processor whose transaction cost is between 100 and 499 should be the best choice for our processing
+     * Each value scores the processor a min of 1 point and max of 3points, for transaction cost: low -> 3, medium -> 2, high -> 1
+     * For reliability: high means very stable. high -> 3, medium -> 2, low -> 1
      */
-    'default_processor' => '',
-
-    /**
-     * @bool
-     * When this is set to true and default processor is configured,
-     * payments will only be processed by the default_processor
-     */
-    'auto_routing' => true,
-
     'routing_rules' => [
         'transaction_cost' => [
             'low' => 100,

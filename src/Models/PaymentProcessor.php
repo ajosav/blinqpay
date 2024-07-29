@@ -2,11 +2,12 @@
 
 namespace Ajosav\Blinqpay\Models;
 
+use Database\Factories\PaymentProcessorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class PaymentProcessor extends Model
 {
@@ -17,8 +18,27 @@ class PaymentProcessor extends Model
      */
     protected $guarded = ['id'];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (PaymentProcessor $processor) {
+            $processor->slug ??= Str::slug(Str::trim(Str::squish($processor->name)));
+        });
+    }
+
     /**
-     * @return HasMany
+     * Create a new factory instance for the model.
+     *
+     * @return PaymentProcessorFactory
+     */
+    protected static function newFactory(): PaymentProcessorFactory
+    {
+        return PaymentProcessorFactory::new();
+    }
+
+    /**
+     * @return BelongsToMany
      */
     public function currencies(): BelongsToMany
     {

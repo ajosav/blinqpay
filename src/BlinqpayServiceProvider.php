@@ -2,7 +2,9 @@
 
 namespace Ajosav\Blinqpay;
 
-use Ajosav\Blinqpay\Command\PaymentProcessorCommand;
+use Ajosav\Blinqpay\Blinqpay as BaseBlinqpay;
+use Ajosav\Blinqpay\Commands\PaymentProcessorCommand;
+use Ajosav\Blinqpay\Facades\Blinqpay;
 use Ajosav\Blinqpay\Processors\BasePaymentProcessor;
 use Ajosav\Blinqpay\Processors\PaymentProcessor;
 use Ajosav\Blinqpay\Repositories\PaymentProcessorRepository;
@@ -11,7 +13,6 @@ use Ajosav\Blinqpay\Services\PaymentProcessorManager;
 use Ajosav\Blinqpay\Utils\FilePathUtil;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
-use Ajosav\Blinqpay\Facades\Blinqpay;
 
 class BlinqpayServiceProvider extends ServiceProvider
 {
@@ -36,14 +37,14 @@ class BlinqpayServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register any package services.
-     *
+     * Publish the config file, so it can be customized within our laravel app
      * @return void
      */
-    public function register()
+    protected function publishConfigs()
     {
-        // register the package config
-        $this->mergeConfigFrom(__DIR__ . '/../config/blinqpay.php', 'blinqpay');
+        $this->publishes([
+            __DIR__ . '/../config/blinqpay.php' => config_path('blinqpay.php'),
+        ], 'blinqpay-config');
     }
 
     /**
@@ -57,6 +58,18 @@ class BlinqpayServiceProvider extends ServiceProvider
         ]);
     }
 
+    public function registerFacades()
+    {
+        $this->app->singleton('Blinqpay', function ($app) {
+            $repository = app(PaymentProcessorRepository::class);
+            return new BaseBlinqpay(new PaymentRouter, $repository);
+        });
+
+        $this->app->singleton('PaymentProcessorAdapter', function ($app) {
+            return new PaymentProcessor(new PaymentProcessorManager);
+        });
+    }
+
     /**
      * Registers the package routes
      * @return void
@@ -68,14 +81,6 @@ class BlinqpayServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the package migrations
-     */
-    public function registerMigrations()
-    {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-    }
-
-    /**
      * Register the package views
      */
     public function registerViews()
@@ -84,26 +89,11 @@ class BlinqpayServiceProvider extends ServiceProvider
     }
 
     /**
-     * Publish the config file, so it can be customized within our laravel app
-     * @return void
+     * Register the package migrations
      */
-    protected function publishConfigs()
+    public function registerMigrations()
     {
-        $this->publishes([
-            __DIR__ . '/../config/blinqpay.php' => config_path('blinqpay.php'),
-        ], 'blinqpay-config');
-    }
-
-    public function registerFacades()
-    {
-        $this->app->singleton('Blinqpay', function ($app) {
-            $repository = app(PaymentProcessorRepository::class);
-            return new \Ajosav\Blinqpay\Blinqpay(new PaymentRouter, $repository);
-        });
-
-        $this->app->singleton('PaymentProcessorAdapter', function ($app) {
-            return new PaymentProcessor(new PaymentProcessorManager);
-        });
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     public function registerProccessors()
@@ -113,18 +103,28 @@ class BlinqpayServiceProvider extends ServiceProvider
         $path = FilePathUtil::getAppPathFromNamespace($namespace);
 
         if (File::isDirectory($path)) {
-
             $files = File::files($path);
+            $paymentProcessorManager = app(PaymentProcessorManager::class);
 
             foreach ($files as $file) {
-                $className = FilePathUtil::pathFromNamespace($namespace, basename($file, '.php'));
-
+                $file_name = str_replace('.php', '', $file->getBasename());
+                $className = $paymentProcessorManager->getClassPath($file_name);
                 if (class_exists($className) && is_subclass_of($className, BasePaymentProcessor::class)) {
                     $processors[] = $className::register();
                 }
             }
         }
-
         Blinqpay::setProcessors($processors);
+    }
+
+    /**
+     * Register any package services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        // register the package config
+        $this->mergeConfigFrom(__DIR__ . '/../config/blinqpay.php', 'blinqpay');
     }
 }

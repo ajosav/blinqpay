@@ -2,9 +2,10 @@
 
 namespace Ajosav\Blinqpay\Exceptions;
 
+use Exception;
 use PHPUnit\Event\Code\Throwable;
 
-class PaymentProcessorException extends \Exception
+class PaymentProcessorException extends Exception
 {
     /**
      * @param string $message
